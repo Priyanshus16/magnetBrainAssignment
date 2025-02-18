@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button, Grid, Card, Typography, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { loadStripe } from '@stripe/stripe-js';
-import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe("pk_test_51BTUDGJAJfZb9HEBwDg86TN1KNprHjkfipXmEDMb0gSCassK5T3ZfxsAbcgKVmAIXF7oZ6ItlZZbXO6idTHE67IM007EwQ4uN3");
 
 function CartPage() {
   const [cart, setCart] = useState([]);
   const [email, setEmail] = useState(""); 
-  const navigate = useNavigate();  
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -28,37 +24,36 @@ function CartPage() {
     setEmail(event.target.value);
   };
 
-  const handleCheckout = async () => {
-    if (!email) {
-        alert("Please enter your email address before proceeding!");
-        return;
+
+  const handleCheckout = async() => {
+    console.log(cart)
+    const stripe = await loadStripe('pk_test_51QtpijGAQWido8uiesRX7yXgZYF41OaY0xHF8q2vbBRNzrjQEenTf93zejJm2yz7Py2jUlNZdNLXnuUA3lpCK9Ta00nTfBwiGj')
+
+    const body = {
+      products: cart
+    }
+    const headers = {
+      "Content-Type": "application/json"
     }
 
-    try {
-        const response = await axios.post("http://localhost:5000/checkout", {
-            cart,
-            email
-        });
+    const response = await fetch('http://localhost:5000/create-checkout-session', {
+      method: "POST",
+      headers:headers,
+      body: JSON.stringify(body)
+    })
 
-        console.log(response,'this is response')
+    const session = await response.json()
 
-        const { sessionId } = response.data;
+    const result = stripe.redirectToCheckout({
+      sessionId:session.id
+    })
 
-        console.log(sessionId,'this is session id')
-
-
-        const stripe = await stripePromise;
-        const { error } = await stripe.redirectToCheckout({
-            sessionId: sessionId,
-        });
-
-        if (error) {
-            console.error("Stripe Checkout Error:", error);
-        }
-    } catch (err) {
-        console.error("Error during checkout:", err);
+    if(result.error) {
+      console.log(result.error)
     }
-  };
+
+  }
+
 
   return (
     <div style={{ padding: 20 }}>

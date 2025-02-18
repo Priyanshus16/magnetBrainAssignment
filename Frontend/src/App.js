@@ -2,7 +2,8 @@
 import Dashboard from './component/Dashboard';
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import CartPage from './component/CartPage';
-import Response from './component/Response';
+import CancelPage from './component/CancelPage';
+import SuccessPage from './component/SuccessPage';
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Dashboard/>} /> 
         <Route path='/cart' element={<CartPage/>} /> 
-        <Route path='/respnse' element={<Response/>} /> 
+        <Route path='/cancel' element={<CancelPage/>} /> 
+        <Route path='/success' element={<SuccessPage/>} /> 
       </Routes>
       </BrowserRouter>
     </div>
