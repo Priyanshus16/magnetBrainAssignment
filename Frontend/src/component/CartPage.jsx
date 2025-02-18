@@ -26,7 +26,11 @@ function CartPage() {
 
 
   const handleCheckout = async() => {
-    console.log(cart)
+
+    if(!email) {
+      alert('please provide email');
+    }
+    
     const stripe = await loadStripe('pk_test_51QtpijGAQWido8uiesRX7yXgZYF41OaY0xHF8q2vbBRNzrjQEenTf93zejJm2yz7Py2jUlNZdNLXnuUA3lpCK9Ta00nTfBwiGj')
 
     const body = {
